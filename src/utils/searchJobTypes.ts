@@ -25,7 +25,7 @@ function cosineSimilarity(a: number[], b: number[]): number {
 
 interface Row {
   id: number;
-  job: string;
+  jobtype: string;
   embeddings: string;
   distance?: number;
 }
@@ -38,14 +38,18 @@ export async function searchJobTypes(embedding: number[]): Promise<Row[]> {
         reject(err);
       } else {
         const typedRows = rows as Row[];
+        //console.log("Database rows: ", typedRows);  // log initial rows
         const distances = typedRows.map((row: Row) => {
           const jobEmbedding: number[] = JSON.parse(row.embeddings) as number[];
           const distance = cosineSimilarity(embedding, jobEmbedding);
+          //console.log("Calculated distance: ", distance);  // log calculated distance
           return { ...row, distance };
         })
         .filter(row => typeof row.distance === 'number')
         .sort((a, b) => (b.distance) - (a.distance));
-
+    
+        //console.log("Made it here!!!!!!!!!!!!!!1")
+        //console.log("Final rows: ", distances);  // log final rows
         db.close();
         resolve(distances.slice(0, 3));
       }

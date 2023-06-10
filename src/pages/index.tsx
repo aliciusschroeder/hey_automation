@@ -1,6 +1,6 @@
-import styles from "./index.module.css";
+//import styles from "./index.module.css";
 import { type NextPage } from "next";
-import Head from "next/head";
+//import Head from "next/head";
 import Link from "next/link";
 
 import { CSSTransition } from 'react-transition-group';

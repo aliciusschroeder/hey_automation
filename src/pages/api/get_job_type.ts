@@ -2,7 +2,8 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type {CreateEmbeddingResponse} from "openai";
-import { Configuration, OpenAIApi} from "openai"; //const { Configuration, OpenAIApi } = require("openai");
+import { Configuration, OpenAIApi} from "openai"; 
+import type { AxiosResponse } from 'axios';
 import { searchJobTypes } from '../../utils/searchJobTypes';
 
 const openai_api_key = process.env.OPENAI_API_KEY;
@@ -16,25 +17,34 @@ interface JobType {
 
 interface Row {
   id: number;
-  job: string;
+  jobtype: string;
   embeddings: string;
   distance?: number;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<JobType[] | { error: string }>) {
   if (req.method === 'POST') {
-    const jobDescription: string = req.body.jobDescription;
+    const { jobDescription } = req.body as { jobDescription: string };
 
     try {
-      const adaResponse: CreateEmbeddingResponse = await openai.createEmbedding({
+      const adaResponse: AxiosResponse<CreateEmbeddingResponse> = await openai.createEmbedding({
         model: "text-embedding-ada-002",
         input: jobDescription,
-      }) as CreateEmbeddingResponse;
+      });
 
-      const embedding: number[] = adaResponse.data.data[0].embedding;
+      const embedding: number[] | undefined = adaResponse.data?.data[0]?.embedding;
 
-      const jobTypes: JobType[] = (await searchJobTypes(embedding)) as JobType[];
+      if (!embedding) {
+        throw new Error("Embedding failed");
+      }
 
+      const rows: Row[] = await searchJobTypes(embedding);
+
+      console.log("Let's go:")
+      console.log(rows[0]?.jobtype);
+
+      const jobTypes: JobType[] = rows.map(row => ({jobtype: row.jobtype, distance: row.distance})) as JobType[];
+      
       res.status(200).json(jobTypes);
     } catch (error) {
       console.error(error);
@@ -44,3 +54,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(405).json({ error: 'Method not allowed' });
   }
 }
+
