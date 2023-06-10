@@ -1,6 +1,6 @@
 # HeyAutomation
 [![Code Size](https://img.shields.io/github/languages/code-size/aliciusschroeder/hey_automation?style=flat-square)](https://github.com/aliciusschroeder/hey_automation)
-[![License](https://img.shields.io/github/license/aliciusschroeder/hey_automation?style=flat-square)](https://github.com/aliciusschroeder/hey_automation/blob/main/LICENSE)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/aliciusschroeder/hey_automation/blob/main/LICENSE)
 
 Hey there! :wave: This repository is an initiative aimed at increasing productivity within our Sales Department at HeyJobs. I've created several tools that streamline common tasks, allowing our team to spend more time doing what they do best: connecting companies with amazing talent!
 
