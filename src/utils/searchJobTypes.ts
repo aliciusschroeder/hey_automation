@@ -2,6 +2,7 @@
 
 import path from 'path';
 import { Database } from 'sqlite3';
+import { jobsInPilotAllowed } from './pilotJobs';
 
 function cosineSimilarity(a: number[], b: number[]): number {
   const dotProduct = a.reduce((acc, val, i) => acc + (val * (b[i] || 0)), 0);
@@ -28,6 +29,7 @@ interface Row {
   jobtype: string;
   embeddings: string;
   distance?: number;
+  pilot_allowed?: boolean;
 }
 
 export async function searchJobTypes(embedding: number[]): Promise<Row[]> {
@@ -43,13 +45,15 @@ export async function searchJobTypes(embedding: number[]): Promise<Row[]> {
           const jobEmbedding: number[] = JSON.parse(row.embeddings) as number[];
           const distance = cosineSimilarity(embedding, jobEmbedding);
           //console.log("Calculated distance: ", distance);  // log calculated distance
-          return { ...row, distance };
+
+          const jobInPilot = jobsInPilotAllowed.find(job => job.jobtype === row.jobtype);
+          const pilot_allowed = jobInPilot ? jobInPilot.pilot_allowed : false;
+
+          return { ...row, distance, pilot_allowed };
         })
         .filter(row => typeof row.distance === 'number')
         .sort((a, b) => (b.distance) - (a.distance));
     
-        //console.log("Made it here!!!!!!!!!!!!!!1")
-        //console.log("Final rows: ", distances);  // log final rows
         db.close();
         resolve(distances.slice(0, 3));
       }
