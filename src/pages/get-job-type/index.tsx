@@ -62,7 +62,7 @@ const GetJobType = () => {
         <div className="bg-white p-4 rounded-lg shadow-inner flex-grow overflow-y-auto">
           {result ? 
             result.map((jobType, i) => 
-              <div key={i} className="flex justify-between items-start p-4 bg-green-200 text-green-800 border border-green-400 rounded-lg shadow-inner mb-4">
+              <div key={i} className={`flex justify-between items-start p-4 ${jobType.pilot_allowed ? 'bg-green-200 text-green-800 border border-green-400' : 'bg-red-200 text-red-900 border border-red-400'} rounded-lg shadow-inner mb-4`}>
                 <div className="flex-grow pr-4">
                   <p className="font-semibold"><strong>Job Type:</strong> {jobType.jobtype}</p>
                   <p className="font-semibold"><strong>Probability:</strong> {jobType.distance}%</p>
