@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { companyName, companyDescription } = req.body as { companyName: string, companyDescription: string };
 
     
-    const prompt = `Weise dem Unternehmen "${String(companyName)}" das Kürzel zu das am besten passt. Wenn Du nicht sicher bist, antworte "??? = Nicht sicher". Antworte mit einem JSON Objekt mit 3 properties:
+    const prompt = `Weise dem Unternehmen "${String(companyName)}" das Kürzel zu das am besten passt. Wenn Du nicht sicher bist, antworte "??? = Nicht sicher". Erfinde KEINE neuen Kürzel! Benutze ausschließlich Kürzel aus der Liste. Antworte mit einem JSON Objekt mit 3 properties:
     - "shortcut" = dem Kürzel
     - "category" = die ausgeschriebene Kategorie
     - "reasoning" = Der Begründung warum du dich so entschieden hast
@@ -47,7 +47,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     VER = Versicherung
     LOG = Logistik
     AGT = Agentur
-    STU = Start Up`
+    STU = Start Up
+    ??? = Nicht sicher`
     
     const response: AxiosResponse<CreateChatCompletionResponse> = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
