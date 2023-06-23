@@ -1,10 +1,10 @@
 // ./src/pages/api/get_category.ts
 
 import { parse } from 'cookie';
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { Configuration, OpenAIApi } from "openai";
+import { Configuration, OpenAIApi } from 'openai';
+import type { CreateChatCompletionResponse } from 'openai';
 import type { AxiosResponse } from 'axios';
-import type { CreateChatCompletionResponse } from "openai";
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 type ResponseContent = {
   shortcut: string;
@@ -20,11 +20,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     apiKey: openai_api_key,
   });
   const openai = new OpenAIApi(configuration);
-  console.log(openai_api_key);
   if (req.method === 'POST') {
-    const { companyName, companyDescription } = req.body as { companyName: string, companyDescription: string };
-
-    
+    const { companyName, companyDescription } = req.body as { companyName: string, companyDescription: string };  
     const prompt = `Weise dem Unternehmen "${String(companyName)}" das Kürzel zu das am besten passt. Wenn Du nicht sicher bist, antworte "??? = Nicht sicher". Erfinde KEINE neuen Kürzel! Benutze ausschließlich Kürzel aus der Liste. Antworte mit einem JSON Objekt mit 3 properties:
     - "shortcut" = dem Kürzel
     - "category" = die ausgeschriebene Kategorie
@@ -67,10 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
 
-    //const { shortcut, category, reasoning } = JSON.parse(response.data.choices[0].message.content) as ResponseContent;
     const { shortcut, category, reasoning } = JSON.parse(response.data.choices?.[0]?.message?.content ?? '{}') as ResponseContent;
-
-
     res.status(200).json({ shortcut, category, reasoning });
   } else {
     res.status(405).json({ message: 'Method not allowed' });

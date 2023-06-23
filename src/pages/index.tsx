@@ -1,13 +1,10 @@
 //src/pages/index.tsx
 
-//import styles from "./index.module.css";
-//import Head from "next/head";
-
-import { type NextPage } from "next";
-import Link from "next/link";
-import { CSSTransition } from 'react-transition-group';
-import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
+import { CSSTransition } from 'react-transition-group';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { type NextPage } from "next";
 
 
 const Home: NextPage = () => {
@@ -33,8 +30,6 @@ const Home: NextPage = () => {
     Cookies.remove('API_KEY');
     setApiKey(null);
   }
-
-
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-blue-500 to-blue-600 p-10">
