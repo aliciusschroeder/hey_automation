@@ -3,6 +3,8 @@
 import path from 'path';
 import { Database } from 'sqlite3';
 import { jobsInPilotAllowed } from './pilotJobs';
+import type { Row } from '../types/jobcategory';
+
 
 function cosineSimilarity(a: number[], b: number[]): number {
   const dotProduct = a.reduce((acc, val, i) => acc + (val * (b[i] || 0)), 0);
@@ -22,14 +24,6 @@ function cosineSimilarity(a: number[], b: number[]): number {
   const percentage = ((similarity - MIN_SIMILARITY) / (MAX_SIMILARITY - MIN_SIMILARITY)) * MAX_PERCENTAGE;
   
   return parseFloat(percentage.toFixed(1));
-}
-
-interface Row {
-  id: number;
-  jobtype: string;
-  embeddings: string;
-  distance?: number;
-  pilot_allowed?: boolean;
 }
 
 export async function searchJobTypes(embedding: number[]): Promise<Row[]> {

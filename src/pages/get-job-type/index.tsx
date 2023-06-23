@@ -1,18 +1,14 @@
 // ./src/pages/get-job-type/index.tsx
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import Link from "next/link";
-import { useRouter } from 'next/router';
-import axios from 'axios';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-interface JobType {
-  jobtype: string;
-  distance: number;
-  pilot_allowed: boolean;
-}
+import type { JobType } from '../../types/jobcategory';
 
 const GetJobType = () => {
   const [jobDescription, setJobDescription] = useState('');

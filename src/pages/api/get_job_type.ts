@@ -1,29 +1,18 @@
 // ./src/pages/api/get_job_type.ts
 
-import type { NextApiRequest, NextApiResponse } from 'next';
-import type {CreateEmbeddingResponse} from "openai";
-import { Configuration, OpenAIApi} from "openai"; 
-import type { AxiosResponse } from 'axios';
-import { searchJobTypes } from '../../utils/searchJobTypes';
+import { Configuration, OpenAIApi } from "openai";
+import type { CreateEmbeddingResponse } from "openai";
+
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { AxiosResponse } from "axios";
+
+import { searchJobTypes } from "../../utils/searchJobTypes";
+import type { JobType, Row } from "../../types/jobcategory";
+
 
 const openai_api_key = process.env.OPENAI_API_KEY;
 const configuration = new Configuration({ apiKey: openai_api_key });
 const openai = new OpenAIApi(configuration);
-
-interface JobType {
-  jobtype: string;
-  distance: number;
-  pilot_allowed: boolean;
-}
-
-
-interface Row {
-  id: number;
-  jobtype: string;
-  embeddings: string;
-  distance?: number;
-  pilot_allowed?: boolean;
-}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<JobType[] | { error: string }>) {
   if (req.method === 'POST') {
@@ -42,10 +31,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       }
 
       const rows: Row[] = await searchJobTypes(embedding);
-
       const jobTypes: JobType[] = rows.map(row => ({jobtype: row.jobtype, distance: row.distance, pilot_allowed: row.pilot_allowed})) as JobType[];
-      
       res.status(200).json(jobTypes);
+
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Error generating job type' });
