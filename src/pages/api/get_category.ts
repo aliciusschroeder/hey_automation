@@ -1,10 +1,13 @@
 // ./src/pages/api/get_category.ts
 
 import { parse } from 'cookie';
+
 import { Configuration, OpenAIApi } from 'openai';
 import type { CreateChatCompletionResponse } from 'openai';
-import type { AxiosResponse } from 'axios';
+
 import type { NextApiRequest, NextApiResponse } from 'next';
+import type { AxiosResponse } from 'axios';
+
 import { COMPANY_TYPES } from '../../types/company_category';
 
 type ResponseContent = {
@@ -16,11 +19,11 @@ type ResponseContent = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const cookies = parse(req.headers.cookie || '');
   const openai_api_key = cookies.API_KEY || process.env.OPENAI_API_KEY as string;
-
   const configuration = new Configuration({
     apiKey: openai_api_key,
   });
   const openai = new OpenAIApi(configuration);
+  
   if (req.method === 'POST') {
     const { companyName, companyDescription } = req.body as { companyName: string, companyDescription: string };  
     const shortcuts = COMPANY_TYPES.map(sc => `${sc.shortcut} = ${sc.category}`).join('\n');
