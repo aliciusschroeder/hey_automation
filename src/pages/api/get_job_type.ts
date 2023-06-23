@@ -1,5 +1,7 @@
 // ./src/pages/api/get_job_type.ts
 
+import { parse } from 'cookie';
+
 import { Configuration, OpenAIApi } from "openai";
 import type { CreateEmbeddingResponse } from "openai";
 
@@ -9,12 +11,14 @@ import type { AxiosResponse } from "axios";
 import { searchJobTypes } from "../../utils/searchJobTypes";
 import type { JobType, Row } from "../../types/jobcategory";
 
-
-const openai_api_key = process.env.OPENAI_API_KEY;
-const configuration = new Configuration({ apiKey: openai_api_key });
-const openai = new OpenAIApi(configuration);
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse<JobType[] | { error: string }>) {
+  const cookies = parse(req.headers.cookie || '');
+  const openai_api_key = cookies.API_KEY || process.env.OPENAI_API_KEY as string;
+  const configuration = new Configuration({
+    apiKey: openai_api_key,
+  });      
+  const openai = new OpenAIApi(configuration);
+
   if (req.method === 'POST') {
     const { jobDescription } = req.body as { jobDescription: string };
 
