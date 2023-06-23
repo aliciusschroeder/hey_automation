@@ -4,11 +4,7 @@
 import { useState, type FormEvent } from 'react';
 import axios, { type AxiosResponse } from 'axios';
 import { useRouter } from 'next/router';
-
-interface Shortcut {
-  shortcut: string;
-  category: string;
-}
+import { type Shortcut, COMPANY_TYPES } from '../../types/company_category';
 
 interface Result {
   shortcut: string;
@@ -32,24 +28,6 @@ export default function Home() {
 
     setResult(res.data);
   };
-
-  const shortcuts: Shortcut[] = [
-    { shortcut: 'PF', category: 'Pflege' },
-    { shortcut: 'KH', category: 'Krankenhaus' },
-    { shortcut: 'PRO', category: 'Produktion' },
-    { shortcut: 'RET', category: 'Retail' },
-    { shortcut: 'BA', category: 'Bank' },
-    { shortcut: 'ÖFF', category: 'Öffentlicher Dienst (Stadt/ Landkreis)' },
-    { shortcut: 'IND', category: 'Industrie' },
-    { shortcut: 'PER', category: 'Personaldienstleister' },
-    { shortcut: 'SER', category: 'Service' },
-    { shortcut: 'BIL', category: 'Bildung' },
-    { shortcut: 'VER', category: 'Versicherung' },
-    { shortcut: 'LOG', category: 'Logistik' },
-    { shortcut: 'AGT', category: 'Agentur' },
-    { shortcut: 'STU', category: 'Start Up' },
-    { shortcut: '???', category: 'Nicht sicher' },
-  ];
   
   const getShortcut = (shortcut: Shortcut, chosenShortcut: string | undefined) => (
     <p key={shortcut.category} className={`text-gray-700 hover:bg-gray-200 ${shortcut.shortcut === chosenShortcut ? 'bg-indigo-100 font-bold' : ''}`}>
@@ -96,7 +74,7 @@ export default function Home() {
       <div className="col-span-2 bg-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-200" style={{ cursor: 'default' }}>
         <h2 className="font-bold text-2xl mb-2">Possible shortcuts:</h2>
         <div className="space-y-1">
-          {shortcuts.map(shortcut => getShortcut(shortcut, result?.shortcut))}
+          {COMPANY_TYPES.map(shortcut => getShortcut(shortcut, result?.shortcut))}
         </div>
     </div>
     </div>

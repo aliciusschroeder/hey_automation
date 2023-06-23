@@ -5,6 +5,7 @@ import { Configuration, OpenAIApi } from 'openai';
 import type { CreateChatCompletionResponse } from 'openai';
 import type { AxiosResponse } from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { COMPANY_TYPES } from '../../types/company_category';
 
 type ResponseContent = {
   shortcut: string;
@@ -22,33 +23,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const openai = new OpenAIApi(configuration);
   if (req.method === 'POST') {
     const { companyName, companyDescription } = req.body as { companyName: string, companyDescription: string };  
+    const shortcuts = COMPANY_TYPES.map(sc => `${sc.shortcut} = ${sc.category}`).join('\n');
     const prompt = `Weise dem Unternehmen "${String(companyName)}" das Kürzel zu das am besten passt. Wenn Du nicht sicher bist, antworte "??? = Nicht sicher". Erfinde KEINE neuen Kürzel! Benutze ausschließlich Kürzel aus der Liste. Antworte mit einem JSON Objekt mit 3 properties:
-    - "shortcut" = dem Kürzel
-    - "category" = die ausgeschriebene Kategorie
-    - "reasoning" = Der Begründung warum du dich so entschieden hast
-    
-    Über das Unternehmen:
-    '''
-    ${String(companyDescription)}
-    '''
-    
-    Kürzel:
-    PF = Pflege
-    KH = Krankenhaus
-    PRO = Produktion
-    RET = Retail
-    BA = Bank
-    ÖFF = Öffentlicher Dienst (Stadt/ Landkreis)
-    IND = Industrie
-    PER = Personaldienstleister
-    SER = Service, Dienstleistungen
-    BIL = Bildung
-    VER = Versicherung
-    LOG = Logistik
-    AGT = Agentur
-    STU = Start Up
-    ??? = Nicht sicher`
-    
+- "shortcut" = dem Kürzel
+- "category" = die ausgeschriebene Kategorie
+- "reasoning" = Der Begründung warum du dich so entschieden hast
+
+Über das Unternehmen:
+'''
+${String(companyDescription)}
+'''
+
+Kürzel:
+${shortcuts}`;   
     const response: AxiosResponse<CreateChatCompletionResponse> = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [
