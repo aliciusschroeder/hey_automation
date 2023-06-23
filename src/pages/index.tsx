@@ -6,11 +6,35 @@
 import { type NextPage } from "next";
 import Link from "next/link";
 import { CSSTransition } from 'react-transition-group';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 
 
 const Home: NextPage = () => {
   const [showAlert, setShowAlert] = useState(true);
+  const [apiKey, setApiKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    const savedKey = localStorage.getItem('API_KEY');
+    setApiKey(savedKey);
+  }, []);
+
+  const storeApiKey = () => {
+    const key = window.prompt("Please enter your API key");
+    if (key) {
+      localStorage.setItem('API_KEY', key);
+      Cookies.set('API_KEY', key, { secure: true, sameSite: 'strict', expires: 7 });
+      setApiKey(key);
+    }
+  }
+
+  const removeApiKey = () => {
+    localStorage.removeItem('API_KEY');
+    Cookies.remove('API_KEY');
+    setApiKey(null);
+  }
+
+
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-blue-500 to-blue-600 p-10">
@@ -19,10 +43,21 @@ const Home: NextPage = () => {
           <h1 className="text-5xl font-bold text-white mb-10">
             Welcome to HeyAutomation
           </h1>
-          {showAlert && (
+          {showAlert && !apiKey && (
             <div className="bg-blue-200 text-blue-900 rounded-md px-6 py-4 mb-6 text-sm sm:text-base shadow-lg relative">
-              Please note that certain functions of this project may not work as expected outside of the development environment because the API keys required for full functionality are not shipped with the public production version.
+              Please note that certain functions of this project may not work as expected outside of the development environment because the API keys required for full functionality are not shipped with the public production version.<br />
+              <button className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200" onClick={storeApiKey}>
+                Enter API Key
+              </button>
               <button className="absolute top-2 right-2 text-xl" onClick={() => setShowAlert(false)}>&times;</button>
+            </div>
+          )}
+          {apiKey && (
+            <div className="bg-green-200 text-green-900 rounded-md px-6 py-4 mb-6 text-sm sm:text-base shadow-lg relative">
+              Locally saved API key will be used<br />
+              <button className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200" onClick={removeApiKey}>
+                Remove locally stored keys
+              </button>
             </div>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
